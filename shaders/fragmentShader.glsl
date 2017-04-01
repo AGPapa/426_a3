@@ -133,9 +133,31 @@ float findIntersectionWithTriangle( Ray ray, vec3 t1, vec3 t2, vec3 t3, out Inte
 
 // Sphere
 float findIntersectionWithSphere( Ray ray, vec3 center, float radius, out Intersection intersect ) {   
+
+    float s = 0.0;
+    vec3 deltaP = center - ray.origin;
+    float firstTerm = dot( ray.direction, deltaP);
+
+    float firstTermSquared = firstTerm * firstTerm;
+
+    float deltaPLengthSquared = length(deltaP);
+    deltaPLengthSquared = deltaPLengthSquared * deltaPLengthSquared;
+
+    float secondTerm = firstTermSquared - deltaPLengthSquared + (radius * radius);
+
+    if ( secondTerm < 0.0 ) return INFINITY;
+
+    secondTerm = sqrt(secondTerm);
+
+    s = firstTerm + secondTerm;
+
+    intersect.position = rayGetOffset( ray, s);
+    return s;
+
+
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 23 lines of code.
-    return INFINITY; // currently reports no intersection
+    //return INFINITY; // currently reports no intersection
     // ----------- STUDENT CODE END ------------
 }
 
