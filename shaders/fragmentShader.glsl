@@ -127,7 +127,11 @@ float findIntersectionWithPlane( Ray ray, vec3 norm, float dist, out Intersectio
 float findIntersectionWithTriangle( Ray ray, vec3 t1, vec3 t2, vec3 t3, out Intersection intersect ) {
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 22 lines of code.
-    return INFINITY; // currently reports no intersection
+	vec3 norm = normalize(cross(t1 - t2, t1 - t3));
+	float dist = ((norm.x * t1.x) + (norm.y * t1.y) + (norm.z * t1.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+	return findIntersectionWithPlane(ray, norm, dist, intersect);
+	
+//    return INFINITY; // currently reports no intersection
     // ----------- STUDENT CODE END ------------
 }
 
