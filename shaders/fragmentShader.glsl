@@ -128,8 +128,30 @@ float findIntersectionWithTriangle( Ray ray, vec3 t1, vec3 t2, vec3 t3, out Inte
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 22 lines of code.
 	vec3 norm = normalize(cross(t1 - t2, t1 - t3));
-	float dist = ((norm.x * t1.x) + (norm.y * t1.y) + (norm.z * t1.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
-	return findIntersectionWithPlane(ray, norm, dist, intersect);
+	float dist = abs((norm.x * t1.x) + (norm.y * t1.y) + (norm.z * t1.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+	float planeIntersect = findIntersectionWithPlane(ray, norm, dist, intersect);
+	
+	//for each side
+	vec3 v1 = t1 - ray.origin;
+	vec3 v2 = t2 - ray.origin;
+	vec3 n1 = normalize(cross(v1, v2));
+	float d1 = ((n1.x * ray.origin.x) + (n1.y * ray.origin.y) + (n1.z * ray.origin.z))/(sqrt(n1.x*n1.x + n1.y*n1.y + n1.z*n1.z));
+	if (d1 < 0.0) return INFINITY;
+	
+	v1 = t2 - ray.origin;
+	v2 = t3 - ray.origin;
+	n1 = normalize(cross(v1, v2));
+	d1 = ((n1.x * ray.origin.x) + (n1.y * ray.origin.y) + (n1.z * ray.origin.z))/(sqrt(n1.x*n1.x + n1.y*n1.y + n1.z*n1.z));
+	if (d1 < 0.0) return INFINITY;
+	
+	v1 = t3 - ray.origin;
+	v2 = t1 - ray.origin;
+	n1 = normalize(cross(v1, v2));
+	d1 = ((n1.x * ray.origin.x) + (n1.y * ray.origin.y) + (n1.z * ray.origin.z))/(sqrt(n1.x*n1.x + n1.y*n1.y + n1.z*n1.z));
+	if (d1 < 0.0) return INFINITY;
+		
+	return planeIntersect;
+	
 	
 //    return INFINITY; // currently reports no intersection
     // ----------- STUDENT CODE END ------------
