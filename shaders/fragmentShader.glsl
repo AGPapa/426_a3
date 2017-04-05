@@ -475,15 +475,8 @@ bool pointInShadow( vec3 pos, vec3 lightVec ) {
     float distToLight = rayIntersectScene(light, material, intersect);
     
     if (distToLight == INFINITY) return false;
-
-    vec3 intersectPos = pos + normalize(lightVec) * distToLight;
-
-    float distToIntersect = distance(intersectPos, pos);
-
-    if (distToLight > distToIntersect) {
-        return true;
-    }
-    return false;
+	else return true;
+	
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 10 lines of code.
     // ----------- STUDENT CODE END ------------
