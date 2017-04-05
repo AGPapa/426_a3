@@ -468,9 +468,11 @@ vec3 calculateDiffuseColor( Material mat, vec3 posIntersection, vec3 normalVecto
 // lightVec is the vector from that position to that light
 bool pointInShadow( vec3 pos, vec3 lightVec ) {
 
-    Material mat = Material(0, vec3(0,0,0), 0.0, vec3(0,0,0), 0, 0.0, 0.0, 0);
-    Intersection intersect = Intersection(vec3(0,0,0), vec3(0,0,0));
-    float distToLight = rayIntersectScene(lightVec, mat, intersect);
+    Material material;
+    Intersection intersect;
+    Ray light = Ray(pos, lightVec);
+
+    float distToLight = rayIntersectScene(light, material, intersect);
     
     if (distToLight == INFINITY) return false;
 
