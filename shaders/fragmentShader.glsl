@@ -180,8 +180,6 @@ float findIntersectionWithSphere( Ray ray, vec3 center, float radius, out Inters
 
     intersect.position = rayGetOffset( ray, s);
     return s;
-
-
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 23 lines of code.
     //return INFINITY; // currently reports no intersection
@@ -190,12 +188,170 @@ float findIntersectionWithSphere( Ray ray, vec3 center, float radius, out Inters
 
 // Box
 float findIntersectionWithBox( Ray ray, vec3 pmin, vec3 pmax, out Intersection out_intersect ) {
+
+    vec3 finalNorm = vec3(0, 0, 0);
+
+    //front
+    vec3 v1 = vec3(pmin.x, pmin.y, pmin.z);
+    vec3 v2 = vec3(pmin.x, pmin.y, pmax.z);
+    vec3 v3 = vec3(pmax.x, pmax.y, pmax.z);
+    vec3 norm = normalize(cross(v1 - v2, v3 - v2));
+    float D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
+    float s = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
+    finalNorm = norm;
+
+    //bottom
+    v2 = vec3(pmin.x, pmax.y, pmin.z);
+    v3 = vec3(pmax.x, pmax.y, pmin.z);
+    norm = normalize(cross(v3 - v2, v1 - v2));
+    D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
+    float s2 = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
+    if (s2 < s) {
+        s = s2;
+        finalNorm = norm;
+    }
+
+    //right side
+    v1 = vec3(pmax.x, pmin.y, pmin.z);
+    v2 = vec3(pmax.x, pmin.y, pmax.z);
+    v3 = vec3(pmax.x, pmax.y, pmax.z);
+    norm = normalize(cross(v3 - v2, v1 - v2));
+    D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
+    s2 = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
+    if (s2 < s) {
+        s = s2;
+        finalNorm = norm;
+    }
+
+    //back
+    v1 = vec3(pmin.x, pmax.y, pmin.z);
+    v2 = vec3(pmin.x, pmax.y, pmax.z);
+    v3 = vec3(pmax.x, pmax.y, pmax.z);
+    norm = normalize(cross(v3 - v2, v1 - v2));
+    D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
+    s2 = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
+    if (s2 < s) {
+        s = s2;
+        finalNorm = norm;
+    }
+
+    //top
+    v1 = vec3(pmin.x, pmin.y, pmax.z);
+    v3 = vec3(pmax.x, pmax.y, pmax.z);
+    norm = normalize(cross(v3 - v2, v1 - v2));
+    D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
+    s2 = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
+    if (s2 < s) {
+        s = s2;
+        finalNorm = norm;
+    }
+
+    //left side
+    v1 = vec3(pmin.x, pmin.y, pmin.z);
+    v2 = vec3(pmin.x, pmin.y, pmax.z);
+    v3 = vec3(pmin.x, pmax.y, pmax.z);
+    norm = normalize(cross(v3 - v2, v1 - v2));
+    D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
+    s2 = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
+    if (s2 < s) {
+        s = s2;
+        finalNorm = norm;
+    }
+
+    /*vec3 v1 = vec3(pmin.x, pmin.y, pmin.z);
+    vec3 v2 = vec3(pmin.x, pmin.y, pmax.z);
+    vec3 v3 = vec3(pmax.x, pmax.y, pmax.z);
+    
+
+    vec3 closestFace[4];
+
+    //front
+    vec3 norm = normalize(cross(v1 - v2, v3 - v2));
+    float dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+    float planeDist = findIntersectionWithPlane(ray, norm, dist, out_intersect); 
+    closestFace[0] = v1;
+    closestFace[1] = v2;
+    closestFace[2] = v3;
+    closestFace[3] = vec3(pmax.x, pmin.y, pmin.z);
+
+    //bottom
+    v2 = vec3(pmin.x, pmax.y, pmin.z);
+    v3 = vec3(pmax.x, pmax.y, pmin.z);
+    norm = normalize(cross(v3 - v2, v1 - v2));
+    dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+    float newDist = findIntersectionWithPlane(ray, norm, dist, out_intersect);
+    if (newDist < planeDist) {
+        planeDist = newDist;
+    }
+
+    //right side
+    v1 = vec3(pmax.x, pmin.y, pmin.z);
+    v2 = vec3(pmax.x, pmin.y, pmax.z);
+    v3 = vec3(pmax.x, pmax.y, pmax.z);
+    norm = normalize(cross(v3 - v2, v1 - v2));
+    dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+    newDist = findIntersectionWithPlane(ray, norm, dist, out_intersect);
+    if (newDist < planeDist) {
+        planeDist = newDist;
+        closestFace[3] = vec3(pmax.x, pmax.y, pmin.z);
+    }
+
+    //back
+    v1 = vec3(pmin.x, pmax.y, pmin.z);
+    v2 = vec3(pmin.x, pmax.y, pmax.z);
+    v3 = vec3(pmax.x, pmax.y, pmax.z);
+    norm = normalize(cross(v3 - v2, v1 - v2));
+    dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+    newDist = findIntersectionWithPlane(ray, norm, dist, out_intersect);
+    if (newDist < planeDist) {
+        planeDist = newDist;
+    }
+
+    //top
+    v1 = vec3(pmin.x, pmin.y, pmax.z);
+    v3 = vec3(pmax.x, pmax.y, pmax.z);
+    norm = normalize(cross(v3 - v2, v1 - v2));
+    dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+    newDist = findIntersectionWithPlane(ray, norm, dist, out_intersect);
+    if (newDist < planeDist) {
+        planeDist = newDist;
+        closestFace[3] = vec3(pmax.x, pmin.y, pmax.z);
+    }
+
+    //left side
+    v1 = vec3(pmin.x, pmin.y, pmin.z);
+    v2 = vec3(pmin.x, pmin.y, pmax.z);
+    v3 = vec3(pmin.x, pmax.y, pmax.z);
+    norm = normalize(cross(v3 - v2, v1 - v2));
+    dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+    newDist = findIntersectionWithPlane(ray, norm, dist, out_intersect);
+    if (newDist < planeDist) {
+        planeDist = newDist;
+        closestFace[3] = vec3(pmin.x, pmax.y, pmin.z);
+    }*/
+
+    
+    vec3 p = rayGetOffset(ray, s);
+
+    if (p.x < pmin.x || p.y < pmin.y || p.z < pmin.z) {
+        return INFINITY;
+    }
+    if (p.x > pmax.x || p.y > pmax.y || p.z > pmax.z) {
+        return INFINITY;
+    }
+
+    out_intersect.position = p;
+    out_intersect.normal = finalNorm;
+
+    return s;
     // ----------- STUDENT CODE BEGIN ------------
     // pmin and pmax represent two bounding points of the box
     // pmin stores [xmin, ymin, zmin] and pmax stores [xmax, ymax, zmax]
     // ----------- Our reference solution uses 24 lines of code.
-    return INFINITY; // currently reports no intersection
+    //return INFINITY; // currently reports no intersection
     // ----------- STUDENT CODE END ------------
+
+
 }  
 
 // Cylinder
@@ -311,9 +467,23 @@ vec3 calculateDiffuseColor( Material mat, vec3 posIntersection, vec3 normalVecto
 // check if position pos in in shadow with respect to a particular light.
 // lightVec is the vector from that position to that light
 bool pointInShadow( vec3 pos, vec3 lightVec ) {
+
+    Material mat = Material(0, vec3(0,0,0), 0.0, vec3(0,0,0), 0, 0.0, 0.0, 0);
+    Intersection intersect = Intersection(vec3(0,0,0), vec3(0,0,0));
+    float distToLight = rayIntersectScene(lightVec, mat, intersect);
+    
+    if (distToLight == INFINITY) return false;
+
+    vec3 intersectPos = pos + normalize(lightVec) * distToLight;
+
+    float distToIntersect = distance(intersectPos, pos);
+
+    if (distToLight > distToIntersect) {
+        return true;
+    }
+    return false;
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 10 lines of code.
-    return false;
     // ----------- STUDENT CODE END ------------
 }
 
