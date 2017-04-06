@@ -102,7 +102,29 @@ bool chooseCloserIntersection( float dist, inout float best_dist, inout Intersec
 // put any general convenience functions you want up here
 // ----------- STUDENT CODE BEGIN ------------
 // ----------- Our reference solution uses 135 lines of code.
+
+float rand(float n){return fract(sin(n) * 43758.5453123);}
+
+float rand(vec2 n) { 
+    return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
+}
+
+float noise(float p){
+    float fl = floor(p);
+  float fc = fract(p);
+    return mix(rand(fl), rand(fl + 1.0), fc);
+}
+    
+float noise(vec2 n) {
+    const vec2 d = vec2(0.0, 1.0);
+  vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));
+    return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);
+}
+
 // ----------- STUDENT CODE END ------------
+
+
+
 
 // forward declaration
 float rayIntersectScene( Ray ray, out Material out_mat, out Intersection out_intersect );
@@ -460,6 +482,9 @@ vec3 calculateSpecialDiffuseColor( Material mat, vec3 posIntersection, vec3 norm
     } 
     else if ( mat.special == MYSPECIAL ) {
         // do something here for myspecial
+
+        vec2 vec = vec2(posIntersection.x, posIntersection.y);
+        return vec3(noise(vec));
         // ----------- Our reference solution uses 2 lines of code.
     }
 
