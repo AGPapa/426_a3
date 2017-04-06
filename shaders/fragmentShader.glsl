@@ -367,10 +367,13 @@ float getIntersectOpenCylinder( Ray ray, vec3 center, vec3 axis, float len, floa
 float getIntersectDisc( Ray ray, vec3 center, vec3 norm, float rad, out Intersection intersect ) {
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 15 lines of code.
-//	vec3 norm = normalize(cross(t1 - t2, t1 - t3));
-//	float dist = dot(norm, t1)/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
-//	float planeDist = findIntersectionWithPlane(ray, norm, dist, intersect);
+	float dist = dot(norm, center)/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+	float planeDist = findIntersectionWithPlane(ray, norm, dist, intersect);
 	
+	vec3 p = ray.origin + ray.direction * planeDist;
+	
+	if (distance(p, center) > rad) return INFINITY;
+	else return planeDist;
 	
 	
     return INFINITY; // currently reports no intersection
