@@ -189,6 +189,8 @@ float findIntersectionWithSphere( Ray ray, vec3 center, float radius, out Inters
 // Box
 float findIntersectionWithBox( Ray ray, vec3 pmin, vec3 pmax, out Intersection out_intersect ) {
 
+	return INFINITY;
+
     vec3 finalNorm = vec3(0, 0, 0);
 
     //front
@@ -365,6 +367,12 @@ float getIntersectOpenCylinder( Ray ray, vec3 center, vec3 axis, float len, floa
 float getIntersectDisc( Ray ray, vec3 center, vec3 norm, float rad, out Intersection intersect ) {
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 15 lines of code.
+//	vec3 norm = normalize(cross(t1 - t2, t1 - t3));
+//	float dist = dot(norm, t1)/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+//	float planeDist = findIntersectionWithPlane(ray, norm, dist, intersect);
+	
+	
+	
     return INFINITY; // currently reports no intersection
     // ----------- STUDENT CODE END ------------
 }
@@ -468,13 +476,16 @@ vec3 calculateDiffuseColor( Material mat, vec3 posIntersection, vec3 normalVecto
 // lightVec is the vector from that position to that light
 bool pointInShadow( vec3 pos, vec3 lightVec ) {
 
+//	return false;
+
     Material material;
     Intersection intersect;
-    Ray light = Ray(pos, lightVec);
+    Ray light = Ray(pos, normalize(lightVec));
 
     float distToLight = rayIntersectScene(light, material, intersect);
     
     if (distToLight == INFINITY) return false;
+	if (length(lightVec) < distToLight) return false;
 	else return true;
 	
     // ----------- STUDENT CODE BEGIN ------------
