@@ -128,7 +128,7 @@ float findIntersectionWithTriangle( Ray ray, vec3 t1, vec3 t2, vec3 t3, out Inte
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 22 lines of code.
 	vec3 norm = normalize(cross(t1 - t2, t1 - t3));
-	float dist = abs((norm.x * t1.x) + (norm.y * t1.y) + (norm.z * t1.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
+	float dist = dot(norm, t1)/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
 	float planeDist = findIntersectionWithPlane(ray, norm, dist, intersect);
 	
 	//for each side
