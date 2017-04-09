@@ -218,110 +218,113 @@ float findIntersectionWithSphere( Ray ray, vec3 center, float radius, out Inters
 // Box
 float findIntersectionWithBox( Ray ray, vec3 pmin, vec3 pmax, out Intersection out_intersect ) {
 
-    //front
-    vec3 norm = vec3(0, -1, 0);
-    float planeDist = findIntersectionWithPlane(ray, norm, pmin.y, out_intersect);
-    
+	int closeIndex = -1;
+	float closeDist = INFINITY;
 
-    //bottom
-    norm = vec3(0, 0, -1);
-    float newDist = findIntersectionWithPlane(ray, norm, pmin.z, out_intersect);
-    if (newDist < planeDist) {
-        planeDist = newDist;
-    }
-    else out_intersect.normal = vec3(0, -1, 0);
-
-    //right side
+    //min x
+    vec3 norm = vec3(1, 0, 0);
+    float planeDistMinX = findIntersectionWithPlane(ray, norm, pmin.x, out_intersect);
+	vec3 p = rayGetOffset(ray, planeDistMinX);
+	if (p.z < pmin.z) planeDistMinX = INFINITY;
+	if (p.z > pmax.z) planeDistMinX = INFINITY;
+	if (p.y < pmin.y) planeDistMinX = INFINITY;
+	if (p.y > pmax.y) planeDistMinX = INFINITY;
+	if (planeDistMinX < closeDist) {
+		closeDist = planeDistMinX;
+		closeIndex = 0;
+	} 
+	
+	//max x
     norm = vec3(1, 0, 0);
-    newDist = findIntersectionWithPlane(ray, norm, pmax.x, out_intersect);
-    if (newDist < planeDist) {
-        planeDist = newDist;
-    }
-    else out_intersect.normal = vec3(0, 0, -1);
-
-    //back
+    float planeDistMaxX = findIntersectionWithPlane(ray, norm, pmax.x, out_intersect);
+	p = rayGetOffset(ray, planeDistMaxX);
+	if (p.z < pmin.z) planeDistMaxX = INFINITY;
+	if (p.z > pmax.z) planeDistMaxX = INFINITY;
+	if (p.y < pmin.y) planeDistMaxX = INFINITY;
+	if (p.y > pmax.y) planeDistMaxX = INFINITY;
+	if (planeDistMaxX < closeDist) {
+		closeDist = planeDistMaxX;
+		closeIndex = 1;
+	}
+	
+	//min y
     norm = vec3(0, 1, 0);
-    newDist = findIntersectionWithPlane(ray, norm, pmax.y, out_intersect);
-    if (newDist < planeDist) {
-        planeDist = newDist;
-    }
-    else out_intersect.normal = vec3(1, 0, 0);
-
-    //top
+    float planeDistMinY = findIntersectionWithPlane(ray, norm, pmin.y, out_intersect);
+	p = rayGetOffset(ray, planeDistMinY);
+	if (p.z < pmin.z) planeDistMinY = INFINITY;
+	if (p.z > pmax.z) planeDistMinY = INFINITY;
+	if (p.x < pmin.x) planeDistMinY = INFINITY;
+	if (p.x > pmax.x) planeDistMinY = INFINITY;
+	if (planeDistMinY < closeDist) {
+		closeDist = planeDistMinY;
+		closeIndex = 2;
+	}
+	
+	//max y
+    norm = vec3(0, 1, 0);
+    float planeDistMaxY = findIntersectionWithPlane(ray, norm, pmax.y, out_intersect);
+	p = rayGetOffset(ray, planeDistMaxY);
+	if (p.z < pmin.z) planeDistMaxY = INFINITY;
+	if (p.z > pmax.z) planeDistMaxY = INFINITY;
+	if (p.x < pmin.x) planeDistMaxY = INFINITY;
+	if (p.x > pmax.x) planeDistMaxY = INFINITY;
+	if (planeDistMaxY < closeDist) {
+		closeDist = planeDistMaxY;
+		closeIndex = 3;
+	}
+	
+	//min z
     norm = vec3(0, 0, 1);
-    newDist = findIntersectionWithPlane(ray, norm, pmax.z, out_intersect);
-    if (newDist < planeDist) {
-        planeDist = newDist;
-    }
-    else out_intersect.normal = vec3(0, 1, 0);
-
-    //left side
-    norm = vec3(-1, 0, 0);
-    newDist = findIntersectionWithPlane(ray, norm, pmin.x, out_intersect);
-    if (newDist < planeDist) {
-        planeDist = newDist;
-    }
-    else out_intersect.normal = vec3(0, 0, 1);
-    
-    vec3 p = rayGetOffset(ray, planeDist);
-
-    /*if (p.x < pmin.x || p.y < pmin.y || p.z < pmin.z) {
-        return INFINITY;
-    }
-    if (p.x > pmax.x || p.y > pmax.y || p.z > pmax.z) {
-        return INFINITY;
-    }*/
-
-    out_intersect.position = p;
-    //out_intersect.normal = vec3(1,1,1);
-
-    //return planeDist;
-
-
-    float tmin = (pmin.x - ray.origin.x) / ray.direction.x;
-    float tmax = (pmax.x - ray.origin.x) / ray.direction.x;
-
-    if (tmin > tmax) {
-        float temp = tmax; 
-        tmax = tmin;
-        tmin = temp;
-    }
-
-    float tymin = (pmin.y - ray.origin.y) / ray.direction.y;
-    float tymax = (pmax.y - ray.origin.y) / ray.direction.y;
-
-    if (tymin > tymax) {
-        float temp = tymax; 
-        tymax = tymin;
-        tymin = temp;
-    }
-
-    if ((tmin > tymax) || (tymin > tmax)) return INFINITY;
-
-    if (tymin > tmin) tmin = tymin;
-
-    if (tymax < tmax) tmax = tymax;
-
-    float tzmin = (pmin.z - ray.origin.z) / ray.direction.z;
-    float tzmax = (pmax.z - ray.origin.z) / ray.direction.z;
-
-    if (tzmin > tzmax) {
-        float temp = tzmax; 
-        tzmax = tzmin;
-        tzmin = temp;
-    }
-
-    if ((tmin > tzmax) || (tzmin > tmax)) return INFINITY;
-
-    if (tzmin > tmin) tmin = tzmin;
-
-    if (tzmax < tmax) tmax = tzmax;
-
-    //if (tmin >= 0.0) out_intersect.position = rayGetOffset(ray, tmin);
-    //else out_intersect.position = rayGetOffset(ray, tmax);
-
-    //out_intersect.normal = vec3(pmin.x, pmax.y, pmin.z);
-    return planeDist;
+    float planeDistMinZ = findIntersectionWithPlane(ray, norm, pmin.z, out_intersect);
+	p = rayGetOffset(ray, planeDistMinZ);
+	if (p.y < pmin.y) planeDistMinZ = INFINITY;
+	if (p.y > pmax.y) planeDistMinZ = INFINITY;
+	if (p.x < pmin.x) planeDistMinZ = INFINITY;
+	if (p.x > pmax.x) planeDistMinZ = INFINITY;
+	if (planeDistMinZ < closeDist) {
+		closeDist = planeDistMinZ;
+		closeIndex = 4;
+	}
+	
+	//max z
+    norm = vec3(0, 0, 1);
+    float planeDistMaxZ = findIntersectionWithPlane(ray, norm, pmax.z, out_intersect);
+	p = rayGetOffset(ray, planeDistMaxZ);
+	if (p.y < pmin.y) planeDistMaxZ = INFINITY;
+	if (p.y > pmax.y) planeDistMaxZ = INFINITY;
+	if (p.x < pmin.x) planeDistMaxZ = INFINITY;
+	if (p.x > pmax.x) planeDistMaxZ = INFINITY;
+	if (planeDistMaxZ < closeDist) {
+		closeDist = planeDistMaxZ;
+		closeIndex = 5;
+	}
+	
+	if (closeIndex == 0) {
+		norm = vec3(1, 0, 0);
+		planeDistMinX = findIntersectionWithPlane(ray, norm, pmin.x, out_intersect);
+		return planeDistMinX;
+	} else if (closeIndex == 1) {
+		norm = vec3(1, 0, 0);
+		planeDistMaxX = findIntersectionWithPlane(ray, norm, pmax.x, out_intersect);
+		return planeDistMaxX;
+	} else if (closeIndex == 2) {
+		norm = vec3(0, 1, 0);
+		planeDistMinY = findIntersectionWithPlane(ray, norm, pmin.y, out_intersect);
+		return planeDistMinY;
+	} else if (closeIndex == 3) {
+		norm = vec3(0, 1, 0);
+		planeDistMaxY = findIntersectionWithPlane(ray, norm, pmax.y, out_intersect);
+		return planeDistMaxY;
+	} else if (closeIndex == 4) {
+		norm = vec3(0, 0, 1);
+		planeDistMinZ = findIntersectionWithPlane(ray, norm, pmin.z, out_intersect);
+		return planeDistMinZ;
+	} else if (closeIndex == 5) {
+		norm = vec3(0, 0, 1);
+		planeDistMaxY = findIntersectionWithPlane(ray, norm, pmax.z, out_intersect);
+		return planeDistMaxZ;
+	} else 
+		return INFINITY;
 
     // ----------- STUDENT CODE BEGIN ------------
     // pmin and pmax represent two bounding points of the box
