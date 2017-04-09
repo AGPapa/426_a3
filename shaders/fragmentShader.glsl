@@ -487,8 +487,8 @@ vec3 calculateSpecialDiffuseColor( Material mat, vec3 posIntersection, vec3 norm
     else if ( mat.special == MYSPECIAL ) {
         // do something here for myspecial
 
-        vec2 vec = vec2(posIntersection.x, posIntersection.y);
-        return vec3(noise(vec));
+        vec2 vec = vec2(posIntersection.x*1.7, posIntersection.y*1.7);
+        return vec3(0,noise(vec)*0.3,0);
         // ----------- Our reference solution uses 2 lines of code.
     }
 
@@ -551,7 +551,7 @@ vec3 getLightContribution( Light light, Material mat, vec3 posIntersection, vec3
             // ----------- STUDENT CODE BEGIN ------------
            vec3 h = normalize(eyeVector + lightVector);
 			float v = pow(clamp(dot(normalVector, h),0.0,1.0), 4.0*mat.shininess);
-			vec3 phongTerm = mat.specular * v;
+			vec3 phongTerm = mat.specular * light.color * v;
 			// ----------- Our reference solution uses 10 lines of code.
             // ----------- STUDENT CODE END ------------
             contribution += phongTerm;
