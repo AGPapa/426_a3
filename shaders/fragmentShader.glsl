@@ -468,21 +468,25 @@ vec3 calculateSpecialDiffuseColor( Material mat, vec3 posIntersection, vec3 norm
     if ( mat.special == CHECKERBOARD ) {
         // do something here for checkerboard
 		float x = posIntersection.x;
+		float y = posIntersection.y;
 		float z = posIntersection.z;
 		vec3 color;
 		bool black;
-		if (mod(z, 16.0) >= 8.0) {
+		if (mod(x, 16.0) >= 8.0) {
 			black = false;
 		} else {
 			black = true;
 		}
-		if (mod(x, 16.0) >= 8.0) {
+		if (mod(y, 16.0) >= 8.0) {
+			black = !black;
+		}
+		if (mod(z, 16.0) >= 8.0) {
 			black = !black;
 		}
 		if (black) {
-			color = vec3(0.3, 0.3, 0.3);
+			color = mat.color*0.3;
 		} else {
-			color = vec3(0.7, 0.7, 0.7);
+			color = mat.color*0.8;
 		}
 		return color;
         // ----------- Our reference solution uses 21 lines of code.
