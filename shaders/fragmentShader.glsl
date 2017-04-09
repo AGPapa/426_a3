@@ -218,163 +218,111 @@ float findIntersectionWithSphere( Ray ray, vec3 center, float radius, out Inters
 // Box
 float findIntersectionWithBox( Ray ray, vec3 pmin, vec3 pmax, out Intersection out_intersect ) {
 
-	return INFINITY;
-
-    vec3 finalNorm = vec3(0, 0, 0);
-
     //front
-    vec3 v1 = vec3(pmin.x, pmin.y, pmin.z);
-    vec3 v2 = vec3(pmin.x, pmin.y, pmax.z);
-    vec3 v3 = vec3(pmax.x, pmax.y, pmax.z);
-    vec3 norm = normalize(cross(v1 - v2, v3 - v2));
-    float D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
-    float s = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
-    finalNorm = norm;
-
-    //bottom
-    v2 = vec3(pmin.x, pmax.y, pmin.z);
-    v3 = vec3(pmax.x, pmax.y, pmin.z);
-    norm = normalize(cross(v3 - v2, v1 - v2));
-    D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
-    float s2 = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
-    if (s2 < s) {
-        s = s2;
-        finalNorm = norm;
-    }
-
-    //right side
-    v1 = vec3(pmax.x, pmin.y, pmin.z);
-    v2 = vec3(pmax.x, pmin.y, pmax.z);
-    v3 = vec3(pmax.x, pmax.y, pmax.z);
-    norm = normalize(cross(v3 - v2, v1 - v2));
-    D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
-    s2 = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
-    if (s2 < s) {
-        s = s2;
-        finalNorm = norm;
-    }
-
-    //back
-    v1 = vec3(pmin.x, pmax.y, pmin.z);
-    v2 = vec3(pmin.x, pmax.y, pmax.z);
-    v3 = vec3(pmax.x, pmax.y, pmax.z);
-    norm = normalize(cross(v3 - v2, v1 - v2));
-    D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
-    s2 = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
-    if (s2 < s) {
-        s = s2;
-        finalNorm = norm;
-    }
-
-    //top
-    v1 = vec3(pmin.x, pmin.y, pmax.z);
-    v3 = vec3(pmax.x, pmax.y, pmax.z);
-    norm = normalize(cross(v3 - v2, v1 - v2));
-    D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
-    s2 = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
-    if (s2 < s) {
-        s = s2;
-        finalNorm = norm;
-    }
-
-    //left side
-    v1 = vec3(pmin.x, pmin.y, pmin.z);
-    v2 = vec3(pmin.x, pmin.y, pmax.z);
-    v3 = vec3(pmin.x, pmax.y, pmax.z);
-    norm = normalize(cross(v3 - v2, v1 - v2));
-    D = -norm.x * pmin.x -norm.y * pmin.y - norm.z * pmin.z;
-    s2 = -1.0 * (( D + dot( norm, ray.origin ) ) / dot( norm, ray.direction ));
-    if (s2 < s) {
-        s = s2;
-        finalNorm = norm;
-    }
-
-    /*vec3 v1 = vec3(pmin.x, pmin.y, pmin.z);
-    vec3 v2 = vec3(pmin.x, pmin.y, pmax.z);
-    vec3 v3 = vec3(pmax.x, pmax.y, pmax.z);
+    vec3 norm = vec3(0, -1, 0);
+    float planeDist = findIntersectionWithPlane(ray, norm, pmin.y, out_intersect);
     
 
-    vec3 closestFace[4];
-
-    //front
-    vec3 norm = normalize(cross(v1 - v2, v3 - v2));
-    float dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
-    float planeDist = findIntersectionWithPlane(ray, norm, dist, out_intersect); 
-    closestFace[0] = v1;
-    closestFace[1] = v2;
-    closestFace[2] = v3;
-    closestFace[3] = vec3(pmax.x, pmin.y, pmin.z);
-
     //bottom
-    v2 = vec3(pmin.x, pmax.y, pmin.z);
-    v3 = vec3(pmax.x, pmax.y, pmin.z);
-    norm = normalize(cross(v3 - v2, v1 - v2));
-    dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
-    float newDist = findIntersectionWithPlane(ray, norm, dist, out_intersect);
+    norm = vec3(0, 0, -1);
+    float newDist = findIntersectionWithPlane(ray, norm, pmin.z, out_intersect);
     if (newDist < planeDist) {
         planeDist = newDist;
     }
+    else out_intersect.normal = vec3(0, -1, 0);
 
     //right side
-    v1 = vec3(pmax.x, pmin.y, pmin.z);
-    v2 = vec3(pmax.x, pmin.y, pmax.z);
-    v3 = vec3(pmax.x, pmax.y, pmax.z);
-    norm = normalize(cross(v3 - v2, v1 - v2));
-    dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
-    newDist = findIntersectionWithPlane(ray, norm, dist, out_intersect);
+    norm = vec3(1, 0, 0);
+    newDist = findIntersectionWithPlane(ray, norm, pmax.x, out_intersect);
     if (newDist < planeDist) {
         planeDist = newDist;
-        closestFace[3] = vec3(pmax.x, pmax.y, pmin.z);
     }
+    else out_intersect.normal = vec3(0, 0, -1);
 
     //back
-    v1 = vec3(pmin.x, pmax.y, pmin.z);
-    v2 = vec3(pmin.x, pmax.y, pmax.z);
-    v3 = vec3(pmax.x, pmax.y, pmax.z);
-    norm = normalize(cross(v3 - v2, v1 - v2));
-    dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
-    newDist = findIntersectionWithPlane(ray, norm, dist, out_intersect);
+    norm = vec3(0, 1, 0);
+    newDist = findIntersectionWithPlane(ray, norm, pmax.y, out_intersect);
     if (newDist < planeDist) {
         planeDist = newDist;
     }
+    else out_intersect.normal = vec3(1, 0, 0);
 
     //top
-    v1 = vec3(pmin.x, pmin.y, pmax.z);
-    v3 = vec3(pmax.x, pmax.y, pmax.z);
-    norm = normalize(cross(v3 - v2, v1 - v2));
-    dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
-    newDist = findIntersectionWithPlane(ray, norm, dist, out_intersect);
+    norm = vec3(0, 0, 1);
+    newDist = findIntersectionWithPlane(ray, norm, pmax.z, out_intersect);
     if (newDist < planeDist) {
         planeDist = newDist;
-        closestFace[3] = vec3(pmax.x, pmin.y, pmax.z);
     }
+    else out_intersect.normal = vec3(0, 1, 0);
 
     //left side
-    v1 = vec3(pmin.x, pmin.y, pmin.z);
-    v2 = vec3(pmin.x, pmin.y, pmax.z);
-    v3 = vec3(pmin.x, pmax.y, pmax.z);
-    norm = normalize(cross(v3 - v2, v1 - v2));
-    dist = abs((norm.x * v2.x) + (norm.y * v2.y) + (norm.z * v2.z))/(sqrt(norm.x*norm.x + norm.y*norm.y + norm.z*norm.z));
-    newDist = findIntersectionWithPlane(ray, norm, dist, out_intersect);
+    norm = vec3(-1, 0, 0);
+    newDist = findIntersectionWithPlane(ray, norm, pmin.x, out_intersect);
     if (newDist < planeDist) {
         planeDist = newDist;
-        closestFace[3] = vec3(pmin.x, pmax.y, pmin.z);
-    }*/
-
+    }
+    else out_intersect.normal = vec3(0, 0, 1);
     
-    vec3 p = rayGetOffset(ray, s);
+    vec3 p = rayGetOffset(ray, planeDist);
 
-    if (p.x < pmin.x || p.y < pmin.y || p.z < pmin.z) {
+    /*if (p.x < pmin.x || p.y < pmin.y || p.z < pmin.z) {
         return INFINITY;
     }
     if (p.x > pmax.x || p.y > pmax.y || p.z > pmax.z) {
         return INFINITY;
-    }
+    }*/
 
     out_intersect.position = p;
-    out_intersect.normal = finalNorm;
+    //out_intersect.normal = vec3(1,1,1);
 
-    return s;
+    //return planeDist;
+
+
+    float tmin = (pmin.x - ray.origin.x) / ray.direction.x;
+    float tmax = (pmax.x - ray.origin.x) / ray.direction.x;
+
+    if (tmin > tmax) {
+        float temp = tmax; 
+        tmax = tmin;
+        tmin = temp;
+    }
+
+    float tymin = (pmin.y - ray.origin.y) / ray.direction.y;
+    float tymax = (pmax.y - ray.origin.y) / ray.direction.y;
+
+    if (tymin > tymax) {
+        float temp = tymax; 
+        tymax = tymin;
+        tymin = temp;
+    }
+
+    if ((tmin > tymax) || (tymin > tmax)) return INFINITY;
+
+    if (tymin > tmin) tmin = tymin;
+
+    if (tymax < tmax) tmax = tymax;
+
+    float tzmin = (pmin.z - ray.origin.z) / ray.direction.z;
+    float tzmax = (pmax.z - ray.origin.z) / ray.direction.z;
+
+    if (tzmin > tzmax) {
+        float temp = tzmax; 
+        tzmax = tzmin;
+        tzmin = temp;
+    }
+
+    if ((tmin > tzmax) || (tzmin > tmax)) return INFINITY;
+
+    if (tzmin > tmin) tmin = tzmin;
+
+    if (tzmax < tmax) tmax = tzmax;
+
+    //if (tmin >= 0.0) out_intersect.position = rayGetOffset(ray, tmin);
+    //else out_intersect.position = rayGetOffset(ray, tmax);
+
+    //out_intersect.normal = vec3(pmin.x, pmax.y, pmin.z);
+    return planeDist;
+
     // ----------- STUDENT CODE BEGIN ------------
     // pmin and pmax represent two bounding points of the box
     // pmin stores [xmin, ymin, zmin] and pmax stores [xmax, ymax, zmax]
