@@ -389,6 +389,45 @@ float findIntersectionWithBox( Ray ray, vec3 pmin, vec3 pmax, out Intersection o
 float getIntersectOpenCylinder( Ray ray, vec3 center, vec3 axis, float len, float rad, out Intersection intersect ) {
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 31 lines of code.
+	
+	vec3 va = axis;
+	vec3 pa = center;
+	vec3 p = ray.origin;
+	vec3 v = ray.direction;
+	vec3 dp = p - pa;
+	vec3 p2 = center + axis*len;
+	
+	float A = length(v-dot(v, va)*va)*length(v-dot(v, va)*va);
+	float B = 2.0 * dot(v - dot(v,va)*va, dp - dot(dp, va)*va);
+	float C = length(dp - dot(dp, va)*va)*length(dp - dot(dp, va)*va) - rad*rad;
+	
+	//(-b+-sqrt(b^2-4ac))/(2a)
+	
+	float i = B*B - 4.0*A*C;
+	if (i < 0.0) return INFINITY;
+
+	
+	float t1 = (-B + sqrt(i))/(2.0*A);
+	float t2 = (-B - sqrt(i))/(2.0*A);
+	
+	if (t1 > 0.0) {
+		vec3 q = rayGetOffset( ray, t1);
+		if (dot(va, q - pa) <= 0.0) return INFINITY;
+		if (dot(va, q - p2) >= 0.0) return INFINITY;
+        intersect.position = rayGetOffset( ray, t1);
+        intersect.normal = normalize(intersect.position - center);
+        return t1;
+    }
+    else if (t2 > 0.0) {
+		vec3 q = rayGetOffset( ray, t2);
+		if (dot(va, q - pa) <= 0.0) return INFINITY;
+		if (dot(va, q - p2) >= 0.0) return INFINITY;
+        intersect.position = rayGetOffset( ray, t2);
+        intersect.normal = normalize(intersect.position - center);
+        return t2;
+    } 
+    return INFINITY;
+	
     return INFINITY; // currently reports no intersection
     // ----------- STUDENT CODE END ------------
 }
