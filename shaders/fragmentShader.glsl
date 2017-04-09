@@ -414,16 +414,18 @@ float getIntersectOpenCylinder( Ray ray, vec3 center, vec3 axis, float len, floa
 		vec3 q = rayGetOffset( ray, t1);
 		if (dot(va, q - pa) <= 0.0) return INFINITY;
 		if (dot(va, q - p2) >= 0.0) return INFINITY;
-        intersect.position = rayGetOffset( ray, t1);
-        intersect.normal = normalize(intersect.position - center);
+        intersect.position = q;
+		float tc = dot(q-center,axis); //length of projection
+        intersect.normal = normalize(q - (center+axis*tc));
         return t1;
     }
     else if (t2 > 0.0) {
 		vec3 q = rayGetOffset( ray, t2);
 		if (dot(va, q - pa) <= 0.0) return INFINITY;
 		if (dot(va, q - p2) >= 0.0) return INFINITY;
-        intersect.position = rayGetOffset( ray, t2);
-        intersect.normal = normalize(intersect.position - center);
+        intersect.position = q;
+		float tc = dot(q-center,axis); //length of projection
+        intersect.normal = normalize(q - (center+axis*tc));
         return t2;
     } 
     return INFINITY;
@@ -505,6 +507,7 @@ float findIntersectionWithCone( Ray ray, vec3 center, vec3 apex, float radius, o
 vec3 calculateSpecialDiffuseColor( Material mat, vec3 posIntersection, vec3 normalVector ) {
     // ----------- STUDENT CODE BEGIN ------------
     if ( mat.special == CHECKERBOARD ) {
+	
         // do something here for checkerboard
 		float x = posIntersection.x;
 		float y = posIntersection.y;
@@ -595,8 +598,12 @@ vec3 getLightContribution( Light light, Material mat, vec3 posIntersection, vec3
         
         if ( mat.materialType == PHONGMATERIAL ) {
             // ----------- STUDENT CODE BEGIN ------------
-            vec3 phongTerm = vec3( 0.0, 0.0, 0.0 ); // not implemented yet, so just add black   
-            // ----------- Our reference solution uses 10 lines of code.
+     //       vec3 phongTerm = vec3( 0.0, 0.0, 0.0 ); // not implemented yet, so just add black  
+			//vec3 posIntersection, vec3 normalVector, vec3 eyeVector
+            vec3 h = normalize(eyeVector + lightVector);
+			float v = pow(clamp(dot(normalVector, h),0.0,1.0), 1000.0);
+			vec3 phongTerm = vec3( v, v, v);
+			// ----------- Our reference solution uses 10 lines of code.
             // ----------- STUDENT CODE END ------------
             contribution += phongTerm;
         }
