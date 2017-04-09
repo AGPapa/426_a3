@@ -598,11 +598,9 @@ vec3 getLightContribution( Light light, Material mat, vec3 posIntersection, vec3
         
         if ( mat.materialType == PHONGMATERIAL ) {
             // ----------- STUDENT CODE BEGIN ------------
-     //       vec3 phongTerm = vec3( 0.0, 0.0, 0.0 ); // not implemented yet, so just add black  
-			//vec3 posIntersection, vec3 normalVector, vec3 eyeVector
-            vec3 h = normalize(eyeVector + lightVector);
-			float v = pow(clamp(dot(normalVector, h),0.0,1.0), 1000.0);
-			vec3 phongTerm = vec3( v, v, v);
+           vec3 h = normalize(eyeVector + lightVector);
+			float v = pow(clamp(dot(normalVector, h),0.0,1.0), 4.0*mat.shininess);
+			vec3 phongTerm = mat.specular * v;
 			// ----------- Our reference solution uses 10 lines of code.
             // ----------- STUDENT CODE END ------------
             contribution += phongTerm;
