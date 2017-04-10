@@ -426,6 +426,44 @@ float findIntersectionWithCylinder( Ray ray, vec3 center, vec3 apex, float radiu
 float getIntersectOpenCone( Ray ray, vec3 apex, vec3 axis, float len, float radius, out Intersection intersect ) {
     // ----------- STUDENT CODE BEGIN ------------
     // ----------- Our reference solution uses 31 lines of code.
+		
+	vec3 va = axis;
+	vec3 pa = apex;
+	vec3 p = ray.origin;
+	vec3 v = ray.direction;
+	vec3 dp = p - pa;
+	vec3 p2 = apex + axis*len;
+	float a = atan(radius/len);
+	
+	float A = cos(a)*cos(a)*(length(v-dot(v, va)*va)*length(v-dot(v, va)*va)) - sin(a)*sin(a)*dot(v,va)*dot(v,va);
+	float B = (2.0 * cos(a)*cos(a)*dot(v - dot(v,va)*va, dp - dot(dp, va)*va)) - (2.0*sin(a)*sin(a)*dot(v,va)*dot(dp,va));
+	float C = cos(a)*cos(a)*length(dp - dot(dp, va)*va)*length(dp - dot(dp, va)*va) - sin(a)*sin(a)*dot(dp,va)*dot(dp,va);
+	
+	//(-b+-sqrt(b^2-4ac))/(2a)
+	
+	float i = B*B - 4.0*A*C;
+	if (i < 0.0) return INFINITY;
+
+	
+	float t1 = (-B + sqrt(i))/(2.0*A);
+	float t2 = (-B - sqrt(i))/(2.0*A);
+	
+	if (t2 - EPS > 0.0 && t2 < t1) {
+		vec3 q = rayGetOffset( ray, t2);
+		if (dot(va, q - pa) <= 0.0) return INFINITY;
+		if (dot(va, q - p2) >= 0.0) return INFINITY;
+        intersect.position = q;
+        intersect.normal =  normalize(q - (dot(q-apex,axis)*axis+apex));
+        return t2;
+    } else if (t1 - EPS > 0.0) {
+		vec3 q = rayGetOffset( ray, t1);
+		if (dot(va, q - pa) <= 0.0) return INFINITY;
+		if (dot(va, q - p2) >= 0.0) return INFINITY;
+        intersect.position = q;
+	    intersect.normal = normalize(q - (dot(q-apex,axis)*axis+apex));
+        return t1;
+    }
+
     return INFINITY; // currently reports no intersection
     // ----------- STUDENT CODE END ------------
 }
