@@ -361,24 +361,22 @@ float getIntersectOpenCylinder( Ray ray, vec3 center, vec3 axis, float len, floa
 	float t1 = (-B + sqrt(i))/(2.0*A);
 	float t2 = (-B - sqrt(i))/(2.0*A);
 	
-	if (t1 > 0.0) {
-		vec3 q = rayGetOffset( ray, t1);
-		if (dot(va, q - pa) <= 0.0) return INFINITY;
-		if (dot(va, q - p2) >= 0.0) return INFINITY;
-        intersect.position = q;
-		float tc = dot(q-center,axis); //length of projection
-        intersect.normal = normalize(q - (center+axis*tc));
-        return t1;
-    }
-    else if (t2 > 0.0) {
+	if (t2 - EPS > 0.0 && t2 < t1) {
 		vec3 q = rayGetOffset( ray, t2);
 		if (dot(va, q - pa) <= 0.0) return INFINITY;
 		if (dot(va, q - p2) >= 0.0) return INFINITY;
         intersect.position = q;
-		float tc = dot(q-center,axis); //length of projection
-        intersect.normal = normalize(q - (center+axis*tc));
+        intersect.normal =  normalize(q - (dot(q-center,axis)*axis+center));
         return t2;
-    } 
+    } else if (t1 - EPS > 0.0) {
+		vec3 q = rayGetOffset( ray, t1);
+		if (dot(va, q - pa) <= 0.0) return INFINITY;
+		if (dot(va, q - p2) >= 0.0) return INFINITY;
+        intersect.position = q;
+	    intersect.normal = normalize(q - (dot(q-center,axis)*axis+center));
+        return t1;
+    }
+	
     return INFINITY;
 	
     return INFINITY; // currently reports no intersection
