@@ -197,12 +197,12 @@ float findIntersectionWithSphere( Ray ray, vec3 center, float radius, out Inters
     float t1 = tca - thc;
     float t2 = tca + thc;
 
-    if (t1 > 0.0) {
+    if (t1 - EPS > 0.0) {
         intersect.position = rayGetOffset( ray, t1);
         intersect.normal = normalize(intersect.position - center);
         return t1;
     }
-    else if (t2 > 0.0) {
+    else if (t2 - EPS > 0.0) {
         intersect.position = rayGetOffset( ray, t2);
         intersect.normal = normalize(intersect.position - center);
         return t2;
@@ -592,8 +592,6 @@ vec3 calcReflectionVector( Material material, vec3 direction, vec3 normalVector,
     float eta = ( isInsideObj ) ? 1.0/material.refractionRatio : material.refractionRatio;
     // ----------- Our reference solution uses 11 lines of code.
     
-    //vec3 T = refract(normalize(direction), normalize(normalVector), eta);
-
     float iTheta = acos((dot(direction * -1.0, normalVector))/(length(direction) * length(normalVector)));
     float rTheta = asin(eta * sin(iTheta));
     vec3 T = ((eta * cos(iTheta) - cos(rTheta)) * normalVector) - (eta * (direction * -1.0));
