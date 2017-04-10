@@ -523,13 +523,27 @@ bool pointInShadow( vec3 pos, vec3 lightVec ) {
     // ----------- STUDENT CODE END ------------
 }
 
+float pointShadowRatio ( vec3 pos, vec3 lightVec ) {
+    float count = 0.0;
+    int k = 3;
+    for (int i = 0; i < 9; i++) {
+        for (int j = 0; j < 9; j++) {
+
+
+            if (!pointInShadow(pos, lightVec)) count += 1.0;
+        }
+    }
+    //return count / float(k * k);
+    return 1.0;
+}
+
 vec3 getLightContribution( Light light, Material mat, vec3 posIntersection, vec3 normalVector, vec3 eyeVector, bool phongOnly, vec3 diffuseColor ) {
 
     vec3 lightVector = light.position - posIntersection;
     
-    if ( pointInShadow( posIntersection, lightVector ) ) {
+    /*if ( pointInShadow( posIntersection, lightVector ) ) {
         return vec3( 0.0, 0.0, 0.0 );
-    }
+    }*/
 
     if ( mat.materialType == PHONGMATERIAL || mat.materialType == LAMBERTMATERIAL ) {
         vec3 contribution = vec3( 0.0, 0.0, 0.0 );
@@ -555,10 +569,10 @@ vec3 getLightContribution( Light light, Material mat, vec3 posIntersection, vec3
             contribution += phongTerm;
         }
 
-        return contribution;
+        return contribution * pointShadowRatio( posIntersection, lightVector );
     }
     else {
-        return diffuseColor;
+        return diffuseColor * pointShadowRatio( posIntersection, lightVector );
     }
 
 }
