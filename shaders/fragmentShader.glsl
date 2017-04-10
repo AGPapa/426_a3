@@ -453,14 +453,16 @@ float getIntersectOpenCone( Ray ray, vec3 apex, vec3 axis, float len, float radi
 		if (dot(va, q - pa) <= 0.0) return INFINITY;
 		if (dot(va, q - p2) >= 0.0) return INFINITY;
         intersect.position = q;
-        intersect.normal =  normalize(q - (dot(q-apex,axis)*axis+apex));
+		vec3 e = q - pa;
+        intersect.normal =  normalize(e - length(e)/(cos(a))*axis);
         return t2;
     } else if (t1 - EPS > 0.0) {
 		vec3 q = rayGetOffset( ray, t1);
 		if (dot(va, q - pa) <= 0.0) return INFINITY;
 		if (dot(va, q - p2) >= 0.0) return INFINITY;
         intersect.position = q;
-	    intersect.normal = normalize(q - (dot(q-apex,axis)*axis+apex));
+		vec3 e = q - pa;
+	    intersect.normal = normalize(e - length(e)/(cos(a))*axis);
         return t1;
     }
 
@@ -599,8 +601,10 @@ vec3 getLightContribution( Light light, Material mat, vec3 posIntersection, vec3
         
         if ( mat.materialType == PHONGMATERIAL ) {
             // ----------- STUDENT CODE BEGIN ------------
-           vec3 h = normalize(eyeVector + lightVector);
-			float v = pow(clamp(dot(normalVector, h),0.0,1.0), 4.0*mat.shininess);
+			vec3 L = normalize(lightVector);
+			vec3 N = normalize(normalVector);
+            vec3 R = normalize(2.0 * dot(L, N)*N - L);
+			float v = pow(clamp(dot(R, eyeVector),0.0,1.0),mat.shininess);
 			vec3 phongTerm = mat.specular * light.color * v;
 			// ----------- Our reference solution uses 10 lines of code.
             // ----------- STUDENT CODE END ------------
