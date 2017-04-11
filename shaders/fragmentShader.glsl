@@ -103,15 +103,17 @@ bool chooseCloserIntersection( float dist, inout float best_dist, inout Intersec
 // ----------- STUDENT CODE BEGIN ------------
 // ----------- Our reference solution uses 135 lines of code.
 
-float rand(float n){return fract(sin(n) * 43758.5453123);}
+float rand(float n){return fract(sin(n * 43758.5453123));}
 
 float rand(vec2 n) { 
     return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
 }
 
+
+
 float noise(float p){
     float fl = floor(p);
-  float fc = fract(p);
+    float fc = fract(p);
     return mix(rand(fl), rand(fl + 1.0), fc);
 }
     
@@ -565,16 +567,16 @@ bool pointInShadow( vec3 pos, vec3 lightVec ) {
 
 float pointShadowRatio ( vec3 pos, vec3 lightVec ) {
     float count = 0.0;
-    int k = 3;
-    for (int i = 0; i < 9; i++) {
-        for (int j = 0; j < 9; j++) {
-
-
-            if (!pointInShadow(pos, lightVec)) count += 1.0;
-        }
+    int k = 7;
+    for (int i = 0; i < 49; i++) {
+		float x1 = clamp(rand(vec2(float(i)/float(k),0.2)),0.0,1.0)-0.5;
+		float x2 = clamp(rand(vec2(0.2,float(i)/float(k))),0.0,1.0)-0.5;
+		float x = 2.0*x1*sqrt(1.0-x1*x1-x2*x2);
+		float y = 2.0*x2*sqrt(1.0-x1*x1-x2*x2);
+		float z = 1.0-2.0*(x1*x1+x2*x2);
+        if (!pointInShadow(pos, lightVec+vec3(x,y,z))) count += 1.0;
     }
-    //return count / float(k * k);
-    return 1.0;
+    return count / float(k * k);
 }
 
 vec3 getLightContribution( Light light, Material mat, vec3 posIntersection, vec3 normalVector, vec3 eyeVector, bool phongOnly, vec3 diffuseColor ) {
@@ -611,10 +613,10 @@ vec3 getLightContribution( Light light, Material mat, vec3 posIntersection, vec3
             contribution += phongTerm;
         }
 
-        return contribution; // * pointShadowRatio( posIntersection, lightVector );
+        return contribution * pointShadowRatio( posIntersection, lightVector );
     }
     else {
-        return diffuseColor; // * pointShadowRatio( posIntersection, lightVector );
+        return diffuseColor * pointShadowRatio( posIntersection, lightVector );
     }
 
 }
