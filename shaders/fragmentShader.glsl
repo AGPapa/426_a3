@@ -103,7 +103,7 @@ bool chooseCloserIntersection( float dist, inout float best_dist, inout Intersec
 // ----------- STUDENT CODE BEGIN ------------
 // ----------- Our reference solution uses 135 lines of code.
 
-//From Stack Overflow
+//From https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
 float rand(float n){return fract(sin(n * 43758.5453123));}
 
 float rand(vec2 n) { 
