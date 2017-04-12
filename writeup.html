@@ -29,8 +29,8 @@
 <li>(1.5) <a href='#Phong+material'>Phong material</a></li>
 <li>(1.5) <a href='#Special+material'>Special material</a></li>
 <li>(1.0) <a href='#Scene'>Scene</a></li>
-<li>(1.0) <a href='#Animate'>Animate</a></li>
-<li>(1.0) <a href='#Art'>Art</a></li>
+<!--<li>(1.0) <a href='#Animate'>Animate</a></li>
+<li>(1.0) <a href='#Art'>Art</a></li> -->
         </ul></div>
 
 <p><hr><p><a name='Plane'></a><h2>Plane</h2><p><hr><p>
@@ -45,7 +45,8 @@
     I did not encounter any particular challenges in implementing this.
 
 <p><hr><p><a name='Triangle'></a><h2>Triangle</h2><p><hr><p>
-(Your description of your implentation of Triangle goes here...)
+We intersected the ray with the plane and then measured if the intersected point was inside each of the three triangle sides.
+
 <br>You can include as many results as you want, but please at least include the following results:
 <br> <a href='index.html?scene=mesh'>scene=mesh</a>
 
@@ -53,13 +54,13 @@
 We calculated T_ca and T_hc values using the geometry described in precept, which gave us one, two, or 0 intersections. In the event of two intersections, we took the closer of the two (T_ca - T_hc).
 
 <p><hr><p><a name='Box'></a><h2>Box</h2><p><hr><p>
-    We used the already-implemented plane intersection function to test intersection with each plane in the box, and if the ray intersected the box twice, we returned the closer of the two intersections.
+We used the already-implemented plane intersection function to test intersection with each plane in the box, and if the ray intersected the box multiple times, we returned the closer of the intersections.
 
 <p><hr><p><a name='Cylinder'></a><h2>Cylinder</h2><p><hr><p>
-(Your description of your implentation of Cylinder goes here...)
+Using an algerbraic equation given in precept, we create two possible intersect points and return the closer one.
 
 <p><hr><p><a name='Cone'></a><h2>Cone</h2><p><hr><p>
-(Your description of your implentation of Cone goes here...)
+Using an algerbraic equation given in precept, we create two possible intersect points and return the closer one.
 
 <p><hr><p><a name='Shadows'></a><h2>Shadows</h2><p><hr><p>
 We casted a ray from the position given to the light source, and if the ray intersected any object, we return the color black, indicating that the position is obscured by whatever object it intersected. 
@@ -71,10 +72,10 @@ We casted several rays from the position given toward the light source in order 
 We used the eta value given and Snell's law to calculate and return the direction of refraction. 
 
 <p><hr><p><a name='Checkerboard'></a><h2>Checkerboard</h2><p><hr><p>
-(Your description of your implentation of Checkerboard goes here...)
+We modulated whether or not the color was dark or light based on the point coordinates.
 
 <p><hr><p><a name='Phong+material'></a><h2>Phong material</h2><p><hr><p>
-(Your description of your implentation of Phong material goes here...)
+Brighten parts of a material based on the angle of the reflected light and the observer.
 
 <p><hr><p><a name='Special+material'></a><h2>Special material</h2><p><hr><p>
 We used a random noise function (https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83) to generate 2d noise, which we colored black and green, to create a noise effect similar to that in the example.
@@ -86,6 +87,9 @@ We used a random noise function (https://gist.github.com/patriciogonzalezvivo/67
 <br>You can include as many results as you want, but please at least include the following results:
 <br> <a href='index.html?scene=myScene'>scene=myScene</a>
 
+<br><img src='results/myScene.png'><p><hr><p><a name='myScene'></a><h2>myScene</h2><p><hr><p>
+
+<!--
 <br><img src='results/myscene.png'><p><hr><p><a name='Animate'></a><h2>Animate</h2><p><hr><p>
 
 We used the frame value as an alpha blender for the spheres' center y components, making them ascend out of the screen. To see this, uncomment the first line in the sphere intersection function, and click animated=1. 
@@ -94,7 +98,7 @@ We used the frame value as an alpha blender for the spheres' center y components
 <br> <a href='index.html?animated=1'>animated=1</a>
 
 <br><p><hr><p><a name='Art'></a><h2>Art</h2><p><hr><p>
-(Your description of your implentation of Art goes here...)
+(Your description of your implentation of Art goes here...) -->
 
     </div>
     </div>

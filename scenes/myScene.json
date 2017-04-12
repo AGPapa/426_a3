@@ -64,12 +64,17 @@
             }
         },
         {
-            "comment": "// the matt sphere",
+            "comment": "// a sphere",
             "type": "sphere",
             "center": [-4, 0, 20],
             "radius": 8,
             "material": {
-                "color": [0.9, 0.8, 0.7]
+                "type": "PHONGMATERIAL",
+                "color": [0.2, 0.4, 1],
+                "shininess": 1000,
+                "specular": [1, 1, 1],
+                "reflectivity": 1,
+                "reflectType": "GLASSREFLECT"
             }
         },
         {
