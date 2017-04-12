@@ -103,13 +103,12 @@ bool chooseCloserIntersection( float dist, inout float best_dist, inout Intersec
 // ----------- STUDENT CODE BEGIN ------------
 // ----------- Our reference solution uses 135 lines of code.
 
+//From Stack Overflow
 float rand(float n){return fract(sin(n * 43758.5453123));}
 
 float rand(vec2 n) { 
     return fract(sin(dot(n, vec2(12.9898, 4.1414))) * 43758.5453);
 }
-
-
 
 float noise(float p){
     float fl = floor(p);
@@ -184,8 +183,12 @@ float findIntersectionWithTriangle( Ray ray, vec3 t1, vec3 t2, vec3 t3, out Inte
 
 // Sphere
 float findIntersectionWithSphere( Ray ray, vec3 center, float radius, out Intersection intersect ) {   
-
+	
+	//UNCOMMENT THIS LINE TO ADD ANIMATION
+	//center = vec3(center.x, center.y + 1.5 * float(frame), center.z);
+	
     vec3 L = center - ray.origin;
+
     float tca = dot( L, ray.direction );
     if (tca < 0.0) {
         return INFINITY;
@@ -583,7 +586,7 @@ vec3 getLightContribution( Light light, Material mat, vec3 posIntersection, vec3
 
     vec3 lightVector = light.position - posIntersection;
     
-    /*if ( pointInShadow( posIntersection, lightVector ) ) {
+/*    if ( pointInShadow( posIntersection, lightVector ) ) {
         return vec3( 0.0, 0.0, 0.0 );
     }*/
 
